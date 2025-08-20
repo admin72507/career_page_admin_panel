@@ -13,45 +13,60 @@ import axios from 'axios'
 import { API_URL } from '@/constant/Constants'
 import toast from 'react-hot-toast'
 
-const UserTable = ({type}:{type?: string}) => {
+// Define user type
+interface User {
+    _id: string
+    FirstName: string
+    LastName: string
+    email: string
+    type: string[] | string
+}
 
-    const [data, setData] = useState<any>()
+// For state
+interface UserResponse {
+    users: User[]
+}
 
+const UserTable = ({ type }: { type?: string }) => {
+
+    const [data, setData] = useState<UserResponse | null>(null)
 
     const userData = (type?: string) => {
-        axios.get(`${API_URL}/api/user`)
+        axios.get<{ users: User[] }>(`${API_URL}/api/user`)
             .then((response) => {
-                let filtered = response?.data?.users;
+                let filtered = response.data.users
 
                 // filter by type if provided
                 if (type) {
-                    filtered = filtered.filter((user: any) =>
+                    filtered = filtered.filter((user: User) =>
                         Array.isArray(user.type)
-                            ? user?.type?.some((t: string) => decodeURIComponent(t).includes(type))
-                            : decodeURIComponent(user?.type).includes(type)
-                    );
+                            ? user.type.some((t) => decodeURIComponent(t).includes(type))
+                            : decodeURIComponent(user.type).includes(type)
+                    )
                 }
 
-                setData({ users: filtered });
-                console.log("User data fetched successfully:", filtered);
-                toast.success("User data fetched successfully");
+                setData({ users: filtered })
+                console.log("User data fetched successfully:", filtered)
+                toast.success("User data fetched successfully")
             })
             .catch((error) => {
-                console.error("Error fetching user data:", error);
-                toast.error("Error fetching user data");
-            });
-    };
+                console.error("Error fetching user data:", error)
+                toast.error("Error fetching user data")
+            })
+    }
 
     useEffect(() => {
-        userData(type === 'All' ? undefined : type);
-    }, [type]);
+        userData(type === 'All' ? undefined : type)
+    }, [type])
 
     return (
         <div className='w-full'>
-            <p className='text-white'>{data?.users?.length}.: users found In type - {type}</p>
+            <p className='text-white'>
+                {data?.users?.length ?? 0} users found in type - {type}
+            </p>
             <Table className='text-white w-full'>
                 <TableCaption>List of your recent users.</TableCaption>
-                <TableHeader >
+                <TableHeader>
                     <TableRow>
                         <TableHead className="w-[100px] text-white">User No.</TableHead>
                         <TableHead className="text-white">Name</TableHead>
@@ -61,13 +76,13 @@ const UserTable = ({type}:{type?: string}) => {
                     </TableRow>
                 </TableHeader>
                 <TableBody>
-                    {data?.users?.map((user: any, index: number) => (
-                        <TableRow key={index}>
+                    {data?.users?.map((user, index) => (
+                        <TableRow key={user._id}>
                             <TableCell className="font-medium">{index + 1}</TableCell>
-                            <TableCell>{user?.FirstName} {user?.LastName}</TableCell>
-                            <TableCell>{user?.email}</TableCell>
+                            <TableCell>{user.FirstName} {user.LastName}</TableCell>
+                            <TableCell>{user.email}</TableCell>
                             <TableCell>
-                                {Array.isArray(user?.type) ? user?.type.join(", ") : user?.type}
+                                {Array.isArray(user.type) ? user.type.join(", ") : user.type}
                             </TableCell>
                             <TableCell className="text-center bg-red-600">Delete</TableCell>
                         </TableRow>
