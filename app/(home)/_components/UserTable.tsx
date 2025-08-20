@@ -21,14 +21,14 @@ const UserTable = ({type}:{type?: string}) => {
     const userData = (type?: string) => {
         axios.get(`${API_URL}/api/user`)
             .then((response) => {
-                let filtered = response.data.users;
+                let filtered = response?.data?.users;
 
                 // filter by type if provided
                 if (type) {
                     filtered = filtered.filter((user: any) =>
                         Array.isArray(user.type)
-                            ? user.type.some((t: string) => decodeURIComponent(t).includes(type))
-                            : decodeURIComponent(user.type).includes(type)
+                            ? user?.type?.some((t: string) => decodeURIComponent(t).includes(type))
+                            : decodeURIComponent(user?.type).includes(type)
                     );
                 }
 
@@ -48,7 +48,7 @@ const UserTable = ({type}:{type?: string}) => {
 
     return (
         <div className='w-full'>
-            <p className='text-white'>{data?.users.length}.: users found In type - {type}</p>
+            <p className='text-white'>{data?.users?.length}.: users found In type - {type}</p>
             <Table className='text-white w-full'>
                 <TableCaption>List of your recent users.</TableCaption>
                 <TableHeader >
@@ -61,13 +61,13 @@ const UserTable = ({type}:{type?: string}) => {
                     </TableRow>
                 </TableHeader>
                 <TableBody>
-                    {data?.users.map((user: any, index: number) => (
+                    {data?.users?.map((user: any, index: number) => (
                         <TableRow key={index}>
                             <TableCell className="font-medium">{index + 1}</TableCell>
-                            <TableCell>{user.FirstName} {user.LastName}</TableCell>
-                            <TableCell>{user.email}</TableCell>
+                            <TableCell>{user?.FirstName} {user?.LastName}</TableCell>
+                            <TableCell>{user?.email}</TableCell>
                             <TableCell>
-                                {Array.isArray(user.type) ? user.type.join(", ") : user.type}
+                                {Array.isArray(user?.type) ? user?.type.join(", ") : user?.type}
                             </TableCell>
                             <TableCell className="text-center bg-red-600">Delete</TableCell>
                         </TableRow>

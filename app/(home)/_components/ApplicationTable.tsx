@@ -20,11 +20,11 @@ const ApplicationTable = ({type}:{type?: string}) => {
   const userData = (type?: string) => {
     axios.get(`${API_URL}/api/application`)
       .then((response) => {
-        let filtered = response.data.applications;
+        let filtered = response?.data?.applications;
 
         if (type) {
           filtered = filtered.filter((app: any) =>
-            decodeURIComponent(app.type).includes(type)
+            decodeURIComponent(app?.type).includes(type)
           );
         }
 
@@ -44,7 +44,7 @@ const ApplicationTable = ({type}:{type?: string}) => {
 
   return (
     <div className='w-full'>
-      <p className='text-white'>{data?.applications.length} applications found of type - {type}</p>
+      <p className='text-white'>{data?.applications?.length} applications found of type - {type}</p>
       <Table className='text-white w-full'>
         <TableCaption>List of your recent applications.</TableCaption>
         <TableHeader >
@@ -60,9 +60,9 @@ const ApplicationTable = ({type}:{type?: string}) => {
           {data?.applications.map((application: any, index: number) => (
             <TableRow key={index}>
               <TableCell className="font-medium">{index + 1}</TableCell>
-              <TableCell>{application.fullName}</TableCell>
-              <TableCell>{application.email}</TableCell>
-              <TableCell>{decodeURIComponent(application.type)}</TableCell>
+              <TableCell>{application?.fullName}</TableCell>
+              <TableCell>{application?.email}</TableCell>
+              <TableCell>{decodeURIComponent(application?.type)}</TableCell>
               <TableCell className="text-center bg-red-500">
                 Delete
               </TableCell>
