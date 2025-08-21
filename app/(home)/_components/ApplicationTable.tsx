@@ -10,7 +10,7 @@ import {
   TableRow,
 } from "@/components/ui/table"
 import axios from 'axios'
-import { API_URL, Application } from '@/constant/Constants'
+import { API_URL, Application, Delete } from '@/constant/Constants'
 import toast from 'react-hot-toast'
 
 const ApplicationTable = ({ type }: { type?: string }) => {
@@ -63,7 +63,7 @@ const ApplicationTable = ({ type }: { type?: string }) => {
               <TableCell>{application?.fullName}</TableCell>
               <TableCell>{application?.email}</TableCell>
               <TableCell>{decodeURIComponent(application?.type)}</TableCell>
-              <TableCell className="text-center bg-red-500 cursor-pointer">
+              <TableCell className="text-center bg-red-500 cursor-pointer" onClick={() => Delete(`${API_URL}/api/application`, application?._id)}>
                 Delete
               </TableCell>
             </TableRow>

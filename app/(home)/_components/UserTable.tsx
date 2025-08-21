@@ -10,7 +10,7 @@ import {
     TableRow,
 } from "@/components/ui/table"
 import axios from 'axios'
-import { API_URL } from '@/constant/Constants'
+import { API_URL, Delete } from '@/constant/Constants'
 import toast from 'react-hot-toast'
 
 // Define user type
@@ -84,7 +84,7 @@ const UserTable = ({ type }: { type?: string }) => {
                             <TableCell>
                                 {Array.isArray(user.type) ? user.type.join(", ") : user.type}
                             </TableCell>
-                            <TableCell className="text-center bg-red-600">Delete</TableCell>
+                            <TableCell className="text-center bg-red-600" onClick={() => Delete(`${API_URL}/api/user`, user?._id)}>Delete</TableCell>
                         </TableRow>
                     ))}
                 </TableBody>
