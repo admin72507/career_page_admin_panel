@@ -16,6 +16,19 @@ import toast from 'react-hot-toast'
 const ApplicationTable = ({ type }: { type?: string }) => {
 
   const [data, setData] = useState<Application[]>([])
+  const [search, setSearch] = useState<string>("");
+
+
+  const keys = ["fullName", "email", "collegeName", "type", ""];
+  const searching = (data: any, search: string) => {
+    return data?.filter((item: any) =>
+      keys.some((key: string | number) => {
+        if (typeof item?.[key] === "string")
+          return item?.[key]?.toLowerCase().includes(search);
+        else return item?.[key]?.toString().includes(search);
+      })
+    );
+  };
 
   const userData = (type?: string) => {
     axios.get(`${API_URL}/api/application`)
@@ -45,6 +58,7 @@ const ApplicationTable = ({ type }: { type?: string }) => {
   return (
     <div className='w-full'>
       <p className='text-white'>{data.length} applications found of type - {type}</p>
+      <input type="text" name="" id="" className="bg-slate-50 py-1 px-2 rounded-md" placeholder="search..." value={search} onChange={(e) => setSearch(e.target.value)} />
       <Table className='text-white w-full'>
         <TableCaption>List of your recent applications.</TableCaption>
         <TableHeader>
@@ -57,7 +71,7 @@ const ApplicationTable = ({ type }: { type?: string }) => {
           </TableRow>
         </TableHeader>
         <TableBody>
-          {data.map((application, index) => (
+          {searching(data, search).map((application:any, index:number) => (
             <TableRow key={index}>
               <TableCell className="font-medium">{index + 1}</TableCell>
               <TableCell>{application?.fullName}</TableCell>
