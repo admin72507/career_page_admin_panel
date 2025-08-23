@@ -14,21 +14,24 @@ import { API_URL, Application, Delete } from '@/constant/Constants'
 import toast from 'react-hot-toast'
 
 const ApplicationTable = ({ type }: { type?: string }) => {
-
   const [data, setData] = useState<Application[]>([])
   const [search, setSearch] = useState<string>("");
 
+  const keys: (keyof Application)[] = ["fullName", "email", "collegeName", "type"]
 
-  const keys = ["fullName", "email", "collegeName", "type", ""];
-  const searching = (data: any, search: string) => {
-    return data?.filter((item: any) =>
-      keys.some((key: string | number) => {
-        if (typeof item?.[key] === "string")
-          return item?.[key]?.toLowerCase().includes(search);
-        else return item?.[key]?.toString().includes(search);
+  const searching = (data: Application[], search: string): Application[] => {
+    return data?.filter((item: Application) =>
+      keys.some((key) => {
+        const value = item[key]
+        if (typeof value === "string") {
+          return value.toLowerCase().includes(search.toLowerCase())
+        } else if (value != null) {
+          return value.toString().toLowerCase().includes(search.toLowerCase())
+        }
+        return false
       })
-    );
-  };
+    )
+  }
 
   const userData = (type?: string) => {
     axios.get(`${API_URL}/api/application`)
@@ -41,7 +44,7 @@ const ApplicationTable = ({ type }: { type?: string }) => {
           )
         }
 
-        setData(filtered) // ✅ directly set array
+        setData(filtered)
         console.log("User data fetched successfully:", filtered)
         toast.success("User data fetched successfully")
       })
@@ -58,7 +61,13 @@ const ApplicationTable = ({ type }: { type?: string }) => {
   return (
     <div className='w-full'>
       <p className='text-white'>{data.length} applications found of type - {type}</p>
-      <input type="text" name="" id="" className="bg-slate-50 py-1 px-2 rounded-md" placeholder="search..." value={search} onChange={(e) => setSearch(e.target.value)} />
+      <input
+        type="text"
+        className="bg-slate-50 py-1 px-2 rounded-md"
+        placeholder="search..."
+        value={search}
+        onChange={(e) => setSearch(e.target.value)}
+      />
       <Table className='text-white w-full'>
         <TableCaption>List of your recent applications.</TableCaption>
         <TableHeader>
@@ -71,13 +80,16 @@ const ApplicationTable = ({ type }: { type?: string }) => {
           </TableRow>
         </TableHeader>
         <TableBody>
-          {searching(data, search).map((application:any, index:number) => (
-            <TableRow key={index}>
+          {searching(data, search).map((application: Application, index: number) => (
+            <TableRow key={application._id ?? index}>
               <TableCell className="font-medium">{index + 1}</TableCell>
               <TableCell>{application?.fullName}</TableCell>
               <TableCell>{application?.email}</TableCell>
               <TableCell>{decodeURIComponent(application?.type)}</TableCell>
-              <TableCell className="text-center bg-red-500 cursor-pointer" onClick={() => Delete(`${API_URL}/api/application`, application?._id)}>
+              <TableCell
+                className="text-center bg-red-500 cursor-pointer"
+                onClick={() => Delete(`${API_URL}/api/application`, application?._id)}
+              >
                 Delete
               </TableCell>
             </TableRow>
